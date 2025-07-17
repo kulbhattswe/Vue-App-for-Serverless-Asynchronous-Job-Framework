@@ -1,0 +1,27 @@
+{
+  "name": "my-vue-app",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
+    "amazon-cognito-identity-js": "^6.3.15",
+    "axios": "^1.10.0",
+    "buffer": "^6.0.3",
+    "mammoth": "^1.9.1",
+    "process": "^0.11.10",
+    "sass": "^1.89.2",
+    "vue": "^3.5.13",
+    "vue3-markdown-it": "^1.0.10",
+    "vuetify": "^3.9.1"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.4",
+    "vite": "^5.4.19"
+  }
+}
