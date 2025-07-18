@@ -37,12 +37,23 @@ jobs:
     - name: Deploy to S3
       uses: jakejarvis/s3-sync-action@v0.5.1
       with:
-        args: --delete
+        args: --delete --cache-control "max-age=31536000,immutable"
       env:
         AWS_S3_BUCKET: ${{ env.BUCKET_NAME }}
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         SOURCE_DIR: dist
+
+    - name: Set no-cache for index.html
+      run: |
+        aws s3 cp dist/index.html s3://$BUCKET_NAME/index.html \
+          --cache-control "no-cache" \
+          --content-type "text/html" \
+          --acl public-read
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          BUCKET_NAME: ${{ env.BUCKET_NAME }}
 
     - name: Invalidate CloudFront cache
       if: env.DISTRIBUTION_ID != 'YOUR_CF_DISTRIBUTION_ID'

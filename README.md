@@ -1,3 +1,5 @@
+![Deploy to S3](https://github.com/kulbhattswe/Vue-App-for-Serverless-Asynchronous-Job-Framework/actions/workflows/deploy.yml/badge.svg)
+
 # Vue App for Serverless Async Job Framework
 
 This is a Vue 3 + Vuetify application that demonstrates the usage of the [Serverless Async Job Framework](https://github.com/kulbhattswe/serverless-async-job-framework). It provides a simple frontend interface for submitting long-running jobs, polling their status, and downloading results from S3 once complete.
