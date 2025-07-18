@@ -12,6 +12,7 @@ jobs:
     env:
       BUCKET_NAME: ${{ vars.BUCKET_NAME }}
       DISTRIBUTION_ID: ${{ vars.DISTRIBUTION_ID }}  # optional
+      S3_REGION: ${{ vars.S3_REGION }}
 
     steps:
     - name: Checkout code
@@ -48,12 +49,13 @@ jobs:
       run: |
         aws s3 cp dist/index.html s3://$BUCKET_NAME/index.html \
           --cache-control "no-cache" \
-          --content-type "text/html" \
-          --acl public-read
+          --content-type "text/html" 
+         
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           BUCKET_NAME: ${{ env.BUCKET_NAME }}
+          AWS_DEFAULT_REGION: ${{ env.BUCKET_NAME }}
 
     - name: Invalidate CloudFront cache
       if: env.DISTRIBUTION_ID != 'YOUR_CF_DISTRIBUTION_ID'
