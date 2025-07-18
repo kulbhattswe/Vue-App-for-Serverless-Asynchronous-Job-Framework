@@ -22,3 +22,44 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+# Node modules
+/node_modules/
+
+# Production build
+/dist/
+/build/
+
+# Local env files
+.env.local
+.env.*.local
+.env
+*.env
+
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+
+# Optional cache
+.cache/
+*.tsbuildinfo
+
+# Optional: Vite or Vue cache
+/.vitepress/dist/
+/vite.config.ts
+
+# Optional: coverage reports
+coverage/
+
+# Optional: local output from tools
+*.local
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Lock files (if you're only using one package manager, ignore the others)
+# Uncomment the one(s) you don’t use:
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml

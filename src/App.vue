@@ -195,7 +195,7 @@ const jobsFormatted = computed(() =>
 <template>
   <v-app>
     <v-main>
-      <v-container>
+      <v-container fluid>
         <!-- Show nothing while checking session -->
         <div v-if="isLoading">Loading...</div>
 
@@ -252,19 +252,21 @@ const jobsFormatted = computed(() =>
               🔄 Load All Jobs
             </v-btn>
 
-            <v-card class="mt-4" elevation="1">
+            <div style="overflow-x: auto; max-width: 100%;">
               <v-data-table
                 :headers="jobHeaders"
                 :items="jobsFormatted"
                 :items-per-page="5"
-                item-value="job_id"
                 density="compact"
+                item-value="job_id"
+                class="mt-4"
                 :footer-props="{
                   itemsPerPageOptions: [5, 10, 20],
                   showFirstLastPage: true,
                   showCurrentPage: true
                 }"
               >
+                <!-- Toolbar -->
                 <template #top>
                   <v-toolbar flat>
                     <v-toolbar-title>All Jobs</v-toolbar-title>
@@ -274,8 +276,17 @@ const jobsFormatted = computed(() =>
                     </v-btn>
                   </v-toolbar>
                 </template>
+
+                <!-- Truncate job_id column -->
+                <template #item.job_id="{ item }">
+                  <div style="max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                    {{ item.job_id }}
+                  </div>
+                </template>
               </v-data-table>
-            </v-card>
+            </div>
+
+
             <div v-if="jobs" class="mt-2 text-caption text-right">
               Loaded {{ jobsFormatted.length }} job(s)
             </div>
