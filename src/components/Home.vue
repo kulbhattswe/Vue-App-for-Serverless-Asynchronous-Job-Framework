@@ -61,6 +61,7 @@
                 :headers="jobHeaders"
                 :items="jobsFormatted"
                 :items-per-page="5"
+                style="table-layout: fixed;"
                 density="compact"
                 item-value="job_id"
                 class="mt-4"
@@ -112,6 +113,8 @@ import axios from 'axios'
 import { apiUrl} from '../config.js'
 import { getCurrentSession } from '../auth/session.js'
 import { logoutUser } from '../auth/logout.js'
+import { userPool } from '../auth/cognito' 
+import { CognitoUser } from 'amazon-cognito-identity-js'
 
 const isAuthenticated = ref(false)
 const token = ref('')
@@ -133,6 +136,15 @@ axios.interceptors.response.use(
         const newToken = session.getAccessToken().getJwtToken()
         axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`
         originalRequest.headers['Authorization'] = `Bearer ${newToken}`
+
+        // ALSO: update token in Cognito session store
+        token.value = newToken
+        const cognitoUser = userPool.getCurrentUser()
+        if (cognitoUser) {
+          cognitoUser.setSignInUserSession(session)
+        }
+        token.value = newToken
+        localStorage.setItem('accessToken', newToken)
         return axios(originalRequest)
       } catch (refreshErr) {
         console.error('Token refresh failed:', refreshErr)
@@ -200,9 +212,7 @@ const handleSubmit = async () => {
 
     const poll = async () => {
       try {
-        const statusResponse = await axios.get(`${apiUrl}/job?job_id=${jobId}`, {
-  headers: { Authorization: `Bearer ${accessToken}` }
-        })
+        const statusResponse = await axios.get(`${apiUrl}/job?job_id=${jobId}`)
 
         const { status, job_id, createdAt, action, name, presigned_url} = statusResponse.data
 
@@ -257,9 +267,7 @@ const fetchJobs = async () => {
   jobsLoading.value = true
   try {
     const accessToken = token.value || localStorage.getItem('accessToken')
-    const response = await axios.get(`${apiUrl}/jobs`, {
-      headers: { Authorization: `Bearer ${accessToken}` }
-    })
+    const response = await axios.get(`${apiUrl}/jobs`)
     jobs.value = response.data.jobs || []
   } catch (err) {
     console.error('Failed to fetch jobs:', err)
