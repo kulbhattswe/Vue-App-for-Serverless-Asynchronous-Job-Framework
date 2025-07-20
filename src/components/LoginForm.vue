@@ -1,12 +1,13 @@
 <template>
   <v-card class="pa-4 ma-4" elevation="2" width="400">
     <v-card-title>Login</v-card-title>
-    <v-form @submit.prevent="handleLogin">
+    <v-form @submit.prevent="handleLogin" :disabled="loading">
       <v-text-field
         v-model="username"
         label="Username"
         required
         density="comfortable"
+        :rules="[v => !!v || 'Username is required']"
       />
       <v-text-field
         v-model="password"
@@ -14,6 +15,7 @@
         type="password"
         required
         density="comfortable"
+        :rules="[v => !!v || 'Password is required']"
       />
       <v-btn type="submit" color="primary" :loading="loading" block>
         Login
@@ -37,11 +39,18 @@ const password = ref('')
 const loading = ref(false)
 const error = ref('')
 
+watch([username, password], () => {
+  if (error.value) error.value = ''
+})
+
 const handleLogin = async () => {
   error.value = ''
   loading.value = true
   try {
-    const { accessToken, idToken, refreshToken } = await loginUser(username.value, password.value)
+    const trimmedUsername = username.value.trim()
+    const trimmedPassword = password.value
+
+    const { accessToken, idToken, refreshToken } = await loginUser(trimmedUsername, trimmedPassword)
     localStorage.setItem('accessToken', accessToken)
     localStorage.setItem('idToken', idToken)
     localStorage.setItem('refreshToken', refreshToken)
@@ -49,10 +58,12 @@ const handleLogin = async () => {
     const payload = JSON.parse(atob(idToken.split('.')[1]))
     console.log('idToken payload:', payload)
     console.log('idToken:', idToken)
-    emit('authenticated', accessToken) // or emit all tokens if needed
+    emit('authenticated', { accessToken, idToken, refreshToken })
+
   } catch (err) {
     error.value = 'Login failed. Please check your credentials.'
     console.error('Login error:', err)
+    router.push('/') // or login route
   } finally {
     loading.value = false
   }

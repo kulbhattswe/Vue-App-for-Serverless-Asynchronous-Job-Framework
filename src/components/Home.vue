@@ -1,7 +1,9 @@
 <template>
   <v-container fluid>
         <!-- Show nothing while checking session -->
-        <div v-if="isLoading">Loading...</div>
+        <div v-if="isLoading" class="d-flex align-center justify-center fill-height">
+            <v-progress-circular indeterminate />
+        </div>
 
         <!-- Show login/signup if not logged in -->
         <auth-form v-else-if="!isLoggedIn" />
@@ -148,7 +150,8 @@ axios.interceptors.response.use(
         return axios(originalRequest)
       } catch (refreshErr) {
         console.error('Token refresh failed:', refreshErr)
-        // maybe trigger logout
+        logoutUser()           // remove token, session
+        router.push('/') 
         return Promise.reject(refreshErr)
       }
     }
